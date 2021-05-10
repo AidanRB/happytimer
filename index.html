@@ -97,9 +97,9 @@
             ms = delta.getMilliseconds()
 
             document.getElementById('days').innerHTML = days
-            document.getElementById('hours').innerHTML = hours
-            document.getElementById('minutes').innerHTML = minutes
-            document.getElementById('seconds_detailed').innerHTML = seconds
+            document.getElementById('hours').innerHTML = zeroPad(hours, 2)
+            document.getElementById('minutes').innerHTML = zeroPad(minutes, 2)
+            document.getElementById('seconds_detailed').innerHTML = zeroPad(seconds, 2)
             document.getElementById('ms_detailed').innerHTML = ms
 
             if (seconds % 2) {
