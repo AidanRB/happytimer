@@ -6,12 +6,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <style>
+        html {
+            height: 100%;
+        }
+
         body {
             background: #222;
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-size: 13.2vw;
             overflow: hidden;
+            height: 100%;
+            margin: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
         }
 
         #time {
@@ -22,29 +35,117 @@
             transform: translateY(-50%);
         }
 
-        #point {
-            /* transition: all .4s;
-            transition-timing-function:cubic-bezier(1, 0, 0, 1); */
+        #time>span {
+            padding: 0;
         }
     </style>
 </head>
 
 <body>
     <script>
-        function updateTime() {
-            seconds = Math.round((1621051200000 - Date.now()) / 1000)
-            ms = (1621051200000 - Date.now()) % 1000
-            document.getElementById('seconds').innerHTML = seconds
-            document.getElementById('ms').innerHTML = ms
-            if (seconds % 2) {
-                document.getElementById('point').style.color = '#222';
+        const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+        let detailed = false
+
+        function toggle() {
+            detailed = !detailed
+
+            if (detailed) {
+                document.getElementById('seconds').innerHTML = ''
+                document.getElementById('point').innerHTML = ''
+                document.getElementById('ms').innerHTML = ''
+
+                document.getElementById('point_detailed').innerHTML = '.'
+                colons = document.getElementsByClassName('colon')
+                for (let i = 0; i < colons.length; i++) {
+                    colons[i].innerHTML = ':'
+                }
             } else {
-                document.getElementById('point').style.color = 'white';
+                document.getElementById('point_detailed').innerHTML = ''
+                colons = document.getElementsByClassName('colon')
+                for (let i = 0; i < colons.length; i++) {
+                    colons[i].innerHTML = ''
+                }
+
+                document.getElementById('days').innerHTML = ''
+                document.getElementById('hours').innerHTML = ''
+                document.getElementById('minutes').innerHTML = ''
+                document.getElementById('seconds_detailed').innerHTML = ''
+                document.getElementById('ms_detailed').innerHTML = ''
+
+                document.getElementById('point').innerHTML = '.'
             }
         }
+
+        function updateTime() {
+            if (detailed) {
+                updateDetailed()
+            } else {
+                updateSeconds()
+            }
+        }
+
+        function updateDetailed() {
+            when = new Date(1621051200000)
+            now = new Date()
+            delta = new Date(when - now)
+
+            days = delta.getDate()
+            hours = delta.getHours()
+            minutes = delta.getMinutes()
+            seconds = delta.getSeconds()
+            ms = delta.getMilliseconds()
+
+            document.getElementById('days').innerHTML = days
+            document.getElementById('hours').innerHTML = hours
+            document.getElementById('minutes').innerHTML = minutes
+            document.getElementById('seconds_detailed').innerHTML = seconds
+            document.getElementById('ms_detailed').innerHTML = ms
+
+            if (seconds % 2) {
+                document.getElementById('point_detailed').style.color = '#222'
+                colons = document.getElementsByClassName('colon')
+                for (let i = 0; i < colons.length; i++) {
+                    colons[i].style.color = '#222'
+                }
+            } else {
+                document.getElementById('point_detailed').style.color = '#aaa'
+                colons = document.getElementsByClassName('colon')
+                for (let i = 0; i < colons.length; i++) {
+                    colons[i].style.color = '#aaa'
+                }
+            }
+
+        }
+
+        function updateSeconds() {
+            seconds = Math.round((1621051200000 - Date.now()) / 1000)
+            ms = (1621051200000 - Date.now()) % 1000
+
+            document.getElementById('seconds').innerHTML = seconds
+            document.getElementById('ms').innerHTML = ms
+
+            if (seconds % 2) {
+                document.getElementById('point').style.color = '#222'
+            } else {
+                document.getElementById('point').style.color = '#aaa'
+            }
+        }
+
         setInterval(updateTime, 1)
+
+        document.body.addEventListener('click', toggle, true);
     </script>
-    <span id="time"><span id="seconds"></span><span id="point">.</span><span id="ms"></span></span>
+
+    <div class="container">
+        <span id="time">
+            <span id="days"></span><span class="colon"></span><span id="hours"></span><span class="colon"></span><span
+                id="minutes"></span><span class="colon"></span><span id="seconds_detailed"></span><span
+                id="point_detailed"></span><span id="ms_detailed"></span>
+
+            <span id="seconds"></span><span id="point">.</span><span id="ms"></span>
+        </span>
+    </div>
 </body>
 
 </html>
